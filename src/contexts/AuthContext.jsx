@@ -20,8 +20,8 @@ export const AuthProvider = ({ children }) => {
           const payload = JSON.parse(atob(token.split('.')[1]));
           setUser({
             id: payload.userId,
-            username: payload.user,
-            role: payload.role
+            email: payload.email,
+            role: payload.roleId
           });
         } catch (e) {
           console.error('Errore nella decodifica del token', e);
@@ -43,8 +43,8 @@ export const AuthProvider = ({ children }) => {
       const payload = JSON.parse(atob(token.split('.')[1]));
       setUser({
         id: payload.userId,
-        username: payload.user,
-        role: payload.role
+        email: payload.email,
+        role: payload.roleId
       });
     } catch (e) {
       console.error('Errore nella decodifica del token', e);

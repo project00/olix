@@ -9,9 +9,8 @@ const LoginModal = ({ show, onClose }) => {
   const { login } = useAuth();
   const [activeTab, setActiveTab] = useState('login');
   const [formData, setFormData] = useState({
-    user: '',
+    email: '', // Changed from 'user' to 'email' for login
     psw: '',
-    email: '',
     confirmPsw: ''
   });
   const [errors, setErrors] = useState({});
@@ -29,8 +28,8 @@ const LoginModal = ({ show, onClose }) => {
   const validateForm = (isRegister) => {
     const newErrors = {};
 
-    if (!formData.user.trim()) {
-      newErrors.user = 'Username obbligatorio';
+    if (!formData.email.trim() || !formData.email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+      newErrors.email = 'Email non valida';
     }
 
     if (!formData.psw) {
@@ -62,16 +61,19 @@ const LoginModal = ({ show, onClose }) => {
     setLoading(true);
     try {
       let response;
+      let response;
       if (isRegister) {
-        response = await authService.register(formData);
+        // For registration, we send email and password
+        response = await authService.register({ email: formData.email, password: formData.psw });
         setSuccessMessage('Registrazione completata!');
       } else {
+        // For login, we send email and password
         response = await authService.login({
-          user: formData.user,
-          psw: formData.psw
+          email: formData.email,
+          password: formData.psw
         });
-        console.log("Token ricevuto:", response.data.token);
-        // Usa il context per gestire il login
+        // The backend now expects 'email' and 'password'
+        // The service passes the object as is.
         login(response.data.token);
         onClose();
       }
@@ -141,45 +143,23 @@ const LoginModal = ({ show, onClose }) => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Username
+                Email
               </label>
               <div className="relative">
-                <FiUser className="absolute left-3 top-3 text-gray-400" />
+                <FiMail className="absolute left-3 top-3 text-gray-400" />
                 <input
-                    type="text"
-                    value={formData.user}
-                    onChange={(e) => setFormData({...formData, user: e.target.value})}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg ${
-                        errors.user ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className={`w-full pl-10 pr-4 py-2 border rounded-lg ${
+                    errors.email ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
               </div>
-              {errors.user && (
-                  <p className="text-red-500 text-sm mt-1">{errors.user}</p>
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
               )}
             </div>
-
-            {activeTab === 'register' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-                  <div className="relative">
-                    <FiMail className="absolute left-3 top-3 text-gray-400" />
-                    <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className={`w-full pl-10 pr-4 py-2 border rounded-lg ${
-                            errors.email ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                    />
-                  </div>
-                  {errors.email && (
-                      <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                  )}
-                </div>
-            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

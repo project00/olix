@@ -297,7 +297,7 @@ const Header = () => {
                         <>
                             <Link to="/profile" className="flex items-center text-gray-700 hover:text-blue-600">
                                 <FiUser className="mr-2" />
-                                <span>{user?.username}</span>
+                                <span>{user?.email}</span>
                             </Link>
                             
                             {/* Menu dropdown per gli admin */}
@@ -357,7 +357,7 @@ const Header = () => {
                                 onClick={() => setMobileMenuOpen(false)}
                             >
                                 <FiUser className="mr-2" />
-                                <span>{user?.username}</span>
+                                <span>{user?.email}</span>
                             </Link>
                             
                             {/* Menu admin mobile */}
